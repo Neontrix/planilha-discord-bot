@@ -30,8 +30,8 @@ driver.get(planilha_url)
 driver.implicitly_wait(10)
 
 # Defina a largura e altura da janela
-custom_width = 1000  # Altere para a largura desejada (em pixels)
-custom_height = 850  # Altere para a altura desejada (em pixels)
+custom_width = 900  # Altere para a largura desejada (em pixels)
+custom_height = 700  # Altere para a altura desejada (em pixels)
 
 # Ajusta a janela para o tamanho especificado
 driver.set_window_size(custom_width, custom_height)
