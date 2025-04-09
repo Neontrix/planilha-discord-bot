@@ -9,6 +9,7 @@ options.add_argument('--headless')  # Executa sem abrir janela
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 options.binary_location = "/snap/bin/chromium"
+options.add_argument(f"--user-data-dir={tempfile.mkdtemp()}")
 
 # Inicia o navegador
 driver = webdriver.Chrome(options=options)
@@ -29,7 +30,7 @@ webhook_url = os.environ['WEBHOOK_URL']
 with open(screenshot_path, "rb") as screenshot:
     response = requests.post(
         webhook_url,
-        data={"content": "✅ Planilha atualizada com sucesso!"},
+        data={"content": "✅ Planilha de farm atualizada com sucesso! - @everyone"},
         files={"file": screenshot}
     )
 
