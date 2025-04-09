@@ -37,7 +37,7 @@ webhook_url = os.environ['WEBHOOK_URL']
 with open(screenshot_path, "rb") as screenshot:
     response = requests.post(
         webhook_url,
-        data={"content": "✅ Planilha de farm atualizada com sucesso! - @Membro"},
+        data={"content": "✅ Planilha de farm atualizada com sucesso! - @everyone"},
         files={"file": screenshot}
     )
 
