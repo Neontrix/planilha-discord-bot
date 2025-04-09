@@ -1,8 +1,8 @@
-name: Print semanal Planilha de farm no Discord
+name: Atualizar Planilha no Discord
 
 on:
   schedule:
-    - cron: '0 20 * * *'
+    - cron: '0 20 * * *'  # roda todos os dias às 20h UTC (17h no Brasil)
   workflow_dispatch:
 
 jobs:
@@ -30,11 +30,3 @@ jobs:
           PLANILHA_URL: ${{ secrets.PLANILHA_URL }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: python3 planilha_discord.py
-
-      - name: Enviar erro para o Discord se o script falhar
-        if: failure()
-        run: |
-          curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "{\"content\": \"❌ Falha ao enviar print da planilha de farm! Verifique o GitHub Actions.\"}" \
-               ${{ secrets.WEBHOOK_URL }}
