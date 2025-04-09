@@ -1,5 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
 import requests
 import os
 
@@ -10,8 +11,8 @@ options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
 options.binary_location = "/snap/bin/chromium"  # ou remova se der erro
 
-# Inicia o navegador
-driver = webdriver.Chrome(options=options)
+# Usa o webdriver-manager para gerenciar o ChromeDriver
+driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
 # Acessa a planilha
 planilha_url = os.environ['PLANILHA_URL']
