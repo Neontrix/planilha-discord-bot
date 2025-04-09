@@ -30,7 +30,7 @@ driver.get(planilha_url)
 driver.implicitly_wait(10)
 
 # Defina a largura e altura da janela
-custom_width = 950  # Altere para a largura desejada (em pixels)
+custom_width = 930  # Altere para a largura desejada (em pixels)
 custom_height = 750  # Altere para a altura desejada (em pixels)
 
 # Ajusta a janela para o tamanho especificado
@@ -48,7 +48,7 @@ webhook_url = os.environ['WEBHOOK_URL']
 with open(screenshot_path, "rb") as screenshot:
     response = requests.post(
         webhook_url,
-        data={"content": "✅ Planilha de farm atualizada com sucesso! - "},
+        data={"content": "✅ Planilha de farm atualizada com sucesso! - @💀┆Membro"},
         files={"file": screenshot}
     )
 
