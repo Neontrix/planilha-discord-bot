@@ -2,9 +2,10 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import time
 import requests
+import os
 
-PLANILHA_URL = "https://docs.google.com/spreadsheets/d/1YUA1r2_TX8rG3l6-OwNUVKhCXVExYxrq6LpOWWe5V6U/edit?usp=sharing"
-WEBHOOK_URL = "https://discord.com/api/webhooks/1359614605588168767/wyxLusmy9cLmA87OwBktkYJz1f1nAHtzja_LoJh3hu6nIrDJRFADLGY5kPO8_pEHey7L"
+PLANILHA_URL = os.environ.get("PLANILHA_URL")
+WEBHOOK_URL = os.environ.get("WEBHOOK_URL")
 
 options = Options()
 options.add_argument("--headless=new")
@@ -16,7 +17,7 @@ driver = webdriver.Chrome(options=options)
 
 try:
     driver.get(PLANILHA_URL)
-    time.sleep(8)
+    time.sleep(8)  # Espera carregar a planilha
     driver.save_screenshot("planilha.png")
 finally:
     driver.quit()
