@@ -26,7 +26,14 @@ driver = webdriver.Chrome(service=service, options=options)
 planilha_url = os.environ['PLANILHA_URL']
 driver.get(planilha_url)
 
-# Tira screenshot
+# Aguarda a página carregar completamente (ajuste o tempo de espera conforme necessário)
+driver.implicitly_wait(10)
+
+# Ajuste o tamanho da janela para capturar a página inteira
+body = driver.find_element("tag name", "body")
+driver.set_window_size(1920, body.size['height'])  # Ajuste o tamanho para o conteúdo da página
+
+# Tira screenshot da página inteira
 screenshot_path = "/tmp/screenshot.png"
 driver.save_screenshot(screenshot_path)
 
@@ -38,7 +45,7 @@ webhook_url = os.environ['WEBHOOK_URL']
 with open(screenshot_path, "rb") as screenshot:
     response = requests.post(
         webhook_url,
-        data={"content": "✅ Planilha de farm atualizada com sucesso! - @everyone"},
+        data={"content": "✅ Planilha de farm atualizada com sucesso! - "},
         files={"file": screenshot}
     )
 
