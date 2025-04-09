@@ -8,8 +8,9 @@ import os
 # Configurações do navegador
 options = Options()
 options.add_argument('--headless')  # Executa sem abrir janela
-options.add_argument('--no-sandbox')
-options.add_argument('--disable-dev-shm-usage')
+options.add_argument('--no-sandbox')  # Recomendado para o ambiente CI/CD
+options.add_argument('--disable-dev-shm-usage')  # Necessário em ambientes limitados de memória
+options.add_argument('--remote-debugging-port=9222')  # Essencial para ambientes headless
 options.binary_location = "/snap/bin/chromium"  # ou remova se der erro
 
 # Inicializa o serviço do ChromeDriver
