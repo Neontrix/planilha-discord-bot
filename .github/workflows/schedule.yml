@@ -16,13 +16,18 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser
-          # Instalar o ChromeDriver com o webdriver-manager
-          curl -sSL https://github.com/ebuchman/installer/releases/download/v1.0.0/install.sh | bash
+          # Verificar a instalação do Chrome
+          which chromium-browser || { echo "Chromium não instalado corretamente!"; exit 1; }
+          # Instalar chromedriver via Selenium e webdriver-manager
+          sudo apt-get install -y unzip
+          curl -sSL https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip -o /tmp/chromedriver.zip
+          unzip /tmp/chromedriver.zip -d /usr/local/bin
+          sudo chmod +x /usr/local/bin/chromedriver
 
       - name: Instalar dependências Python
         run: |
           python3 -m pip install --upgrade pip
-          pip install selenium requests webdriver-manager
+          pip install selenium requests
 
       - name: Rodar script Python
         env:
