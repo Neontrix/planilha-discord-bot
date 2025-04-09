@@ -1,35 +1,38 @@
+import tempfile
+import shutil
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import time
-import requests
-import os
 
-PLANILHA_URL = os.environ.get("PLANILHA_URL")
-WEBHOOK_URL = os.environ.get("WEBHOOK_URL")
-
+# Configura opções do Chrome
 options = Options()
-options.add_argument("--headless=new")
+options.add_argument("--headless")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
-options.add_argument("--window-size=1920,1080")
+options.add_argument("--disable-gpu")
 
+# Caminho binário do Chrome (ajustar conforme ambiente)
 options.binary_location = "/snap/bin/chromium"
 
-driver = webdriver.Chrome(options=options)
+# Cria diretório temporário para o perfil do Chrome
+temp_user_data_dir = tempfile.mkdtemp()
+options.add_argument(f"--user-data-dir={temp_user_data_dir}")
 
 try:
-    driver.get(PLANILHA_URL)
-    time.sleep(8)  # Espera carregar a planilha
-    driver.save_screenshot("planilha.png")
+    # Inicia o driver com as opções configuradas
+    driver = webdriver.Chrome(options=options)
+
+    # Acesso à página desejada (exemplo)
+    driver.get("https://www.google.com")
+
+    # Espera apenas para fins de teste
+    time.sleep(3)
+
+    print("Título da página:", driver.title)
+
+    # Aqui você pode colocar o resto da lógica (login, scraping, etc.)
+
 finally:
+    # Encerra o driver e remove o diretório temporário
     driver.quit()
-
-with open("planilha.png", "rb") as img:
-    files = {'file': img}
-    data = {'content': '@everyone - Atualização farm semanal da planilha 📊'}
-    r = requests.post(WEBHOOK_URL, data=data, files=files)
-
-    if r.status_code == 204:
-        print("Enviado com sucesso!")
-    else:
-        print(f"Erro ao enviar: {r.status_code} - {r.text}")
+    shutil.rmtree(temp_user_data_dir)
