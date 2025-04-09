@@ -12,7 +12,7 @@ options.add_argument('--disable-dev-shm-usage')
 options.binary_location = "/snap/bin/chromium"  # ou remova se der erro
 
 # Usa o webdriver-manager para gerenciar o ChromeDriver
-driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+driver = webdriver.Chrome(executable_path=ChromeDriverManager().install(), options=options)
 
 # Acessa a planilha
 planilha_url = os.environ['PLANILHA_URL']
