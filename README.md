@@ -1,4 +1,5 @@
 **Planilha de Farm Semanal Automatizada**
+
 Este projeto tem como objetivo automatizar o acompanhamento do farm semanal de membros em um jogo, utilizando o Google Planilhas, Google Apps Script, Python e GitHub Actions. O sistema gera, de forma automática, a distribuição de metas semanais entre os membros e envia atualizações via Discord.
 
 **Funcionalidades**
