@@ -13,6 +13,9 @@ options.add_argument('--disable-dev-shm-usage')  # Necessário em ambientes limi
 options.add_argument('--remote-debugging-port=9222')  # Essencial para ambientes headless
 options.binary_location = "/snap/bin/chromium"  # ou remova se der erro
 
+# Configurar o zoom para garantir que a página inteira seja visível
+options.add_argument("force-device-scale-factor=1")
+
 # Inicializa o serviço do ChromeDriver
 service = Service(ChromeDriverManager().install())
 
