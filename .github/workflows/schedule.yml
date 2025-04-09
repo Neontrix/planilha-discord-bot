@@ -1,8 +1,8 @@
-name: Atualizar Planilha no Discord
+name: Planilha de farm no Discord
 
 on:
   schedule:
-    - cron: '0 20 * * *'
+    - cron: '1 4 * * 1'  # Toda segunda-feira às 01:01 (BRT / UTC-3)
   workflow_dispatch:
 
 jobs:
@@ -16,15 +16,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
-
-          TARGET="/usr/bin/chromedriver"
-          SOURCE="/usr/lib/chromium-browser/chromedriver"
-
-          if [ ! -e "$TARGET" ]; then
-            sudo ln -s "$SOURCE" "$TARGET"
-          elif [ "$(readlink -f "$TARGET")" != "$SOURCE" ]; then
-            sudo rm "$TARGET"
-            sudo ln -s "$SOURCE" "$TARGET"
+          if [ ! -e /usr/bin/chromedriver ]; then
+            sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
           fi
 
       - name: Instalar dependências Python
