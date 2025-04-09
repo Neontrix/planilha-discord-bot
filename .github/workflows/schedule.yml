@@ -2,12 +2,13 @@ name: Atualizar Planilha no Discord
 
 on:
   schedule:
-    - cron: '0 20 * * *'  # Hoje às 17h BRT (20h UTC) - ajuste depois pra '0 3 * * 1' se quiser 00h BRT toda segunda
+    - cron: '0 20 * * *'  # 17h BRT (20h UTC)
   workflow_dispatch:      # Permite rodar manualmente também
 
 jobs:
   run-script:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout do código
         uses: actions/checkout@v3
@@ -16,8 +17,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
-          # Garante que o chromedriver esteja acessível
-          if [ ! -f /usr/bin/chromedriver ]; then sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver; fi
+          sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
 
       - name: Instalar dependências Python
         run: |
