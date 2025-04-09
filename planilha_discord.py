@@ -29,20 +29,14 @@ driver.get(planilha_url)
 # Aguarda a página carregar completamente (ajuste o tempo de espera conforme necessário)
 driver.implicitly_wait(10)
 
-# Obtém a posição e o tamanho do elemento que representa a área da planilha
-# Ajuste esse selector para o elemento correto que representa a planilha
-# No caso, você pode usar algo como "table", "tbody" ou outro identificador
-planilha_element = driver.find_element("tag name", "table")  # Ajuste conforme necessário
+# Defina a largura e altura da janela
+custom_width = 1600  # Altere para a largura desejada (em pixels)
+custom_height = 1600  # Altere para a altura desejada (em pixels)
 
-# Obtém a posição e tamanho da planilha
-location = planilha_element.location
-size = planilha_element.size
+# Ajusta a janela para o tamanho especificado
+driver.set_window_size(custom_width, custom_height)
 
-# Ajuste o tamanho da janela para capturar até a coluna J (exemplo de largura de 1000px, altere conforme necessário)
-driver.set_window_size(1200, size['height'])  # Definindo a altura da janela para o conteúdo da planilha
-driver.set_window_position(0, location['y'])  # Ajuste a posição da janela para capturar a área desejada
-
-# Captura de tela da área visível da janela
+# Tira screenshot
 screenshot_path = "/tmp/screenshot.png"
 driver.save_screenshot(screenshot_path)
 
