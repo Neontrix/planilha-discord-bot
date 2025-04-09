@@ -2,7 +2,7 @@ name: Atualizar Planilha no Discord
 
 on:
   schedule:
-    - cron: '0 20 * * *'  # roda todos os dias às 20h UTC (17h no Brasil)
+    - cron: '0 20 * * *'
   workflow_dispatch:
 
 jobs:
@@ -16,8 +16,15 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
-          if [ ! -e /usr/bin/chromedriver ] || [ "$(readlink -f /usr/bin/chromedriver)" != "/usr/lib/chromium-browser/chromedriver" ]; then
-            sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+
+          TARGET="/usr/bin/chromedriver"
+          SOURCE="/usr/lib/chromium-browser/chromedriver"
+
+          if [ ! -e "$TARGET" ]; then
+            sudo ln -s "$SOURCE" "$TARGET"
+          elif [ "$(readlink -f "$TARGET")" != "$SOURCE" ]; then
+            sudo rm "$TARGET"
+            sudo ln -s "$SOURCE" "$TARGET"
           fi
 
       - name: Instalar dependências Python
@@ -30,3 +37,11 @@ jobs:
           PLANILHA_URL: ${{ secrets.PLANILHA_URL }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: python3 planilha_discord.py
+
+      - name: Enviar erro para o Discord se o script falhar
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \"❌ Falha ao enviar print da planilha de farm! Verifique o GitHub Actions.\"}" \
+               ${{ secrets.WEBHOOK_URL }}
