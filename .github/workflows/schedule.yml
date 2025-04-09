@@ -1,4 +1,4 @@
-name: Atualizar Planilha no Discord
+name: Print semanal Planilha de farm no Discord
 
 on:
   schedule:
@@ -36,5 +36,5 @@ jobs:
         run: |
           curl -H "Content-Type: application/json" \
                -X POST \
-               -d "{\"content\": \"❌ Falha ao atualizar a planilha! Verifique o GitHub Actions.\"}" \
+               -d "{\"content\": \"❌ Falha ao enviar print da planilha de farm! Verifique o GitHub Actions.\"}" \
                ${{ secrets.WEBHOOK_URL }}
