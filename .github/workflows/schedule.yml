@@ -16,7 +16,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
-          if [ "$(readlink -f /usr/bin/chromedriver)" != "/usr/lib/chromium-browser/chromedriver" ]; then
+          if [ ! -e /usr/bin/chromedriver ] || [ "$(readlink -f /usr/bin/chromedriver)" != "/usr/lib/chromium-browser/chromedriver" ]; then
             sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
           fi
 
