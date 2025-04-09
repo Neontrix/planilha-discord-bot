@@ -1,6 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-import tempfile
 import requests
 import os
 
@@ -9,8 +8,7 @@ options = Options()
 options.add_argument('--headless')  # Executa sem abrir janela
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
-options.binary_location = "/snap/bin/chromium"
-options.add_argument(f"--user-data-dir={tempfile.mkdtemp()}")
+options.binary_location = "/snap/bin/chromium"  # ou remova se der erro
 
 # Inicia o navegador
 driver = webdriver.Chrome(options=options)
@@ -35,5 +33,5 @@ with open(screenshot_path, "rb") as screenshot:
         files={"file": screenshot}
     )
 
-# (Opcional) Lança erro se o envio falhar, para forçar o "failure()" no .yml
+# Lança erro se o envio falhar
 response.raise_for_status()
