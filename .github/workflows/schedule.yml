@@ -17,7 +17,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
+          # Garante que o chromedriver esteja acessível
           sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+      
 
       - name: Instalar dependências Python
         run: |
