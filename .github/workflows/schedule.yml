@@ -2,31 +2,30 @@ name: Atualizar Planilha no Discord
 
 on:
   schedule:
-    - cron: '0 20 * * *'  # Hoje às 17h BRT (20h UTC)
-  workflow_dispatch:     # Permite rodar manualmente também
-  
+    - cron: '0 20 * * *'  # Hoje às 17h BRT (20h UTC) - ajuste depois pra '0 3 * * 1' se quiser 00h BRT toda segunda
+  workflow_dispatch:      # Permite rodar manualmente também
 
 jobs:
   run-script:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout código
+      - name: Checkout do código
         uses: actions/checkout@v3
 
       - name: Instalar dependências do sistema
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget unzip xvfb chromium-browser chromium-chromedriver
-          sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          # Garante que o chromedriver esteja acessível
+          if [ ! -f /usr/bin/chromedriver ]; then sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver; fi
 
-      - name: Instalar dependências do Python
+      - name: Instalar dependências Python
         run: |
           python3 -m pip install --upgrade pip
           pip install selenium requests
 
-      - name: Rodar script com X virtual framebuffer
+      - name: Rodar script Python
         env:
           PLANILHA_URL: ${{ secrets.PLANILHA_URL }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-        run: |
-          xvfb-run -a python3 planilha_discord.py
+        run: python3 planilha_discord.py
