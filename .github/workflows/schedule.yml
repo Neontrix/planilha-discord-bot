@@ -2,8 +2,8 @@ name: Atualizar Planilha no Discord
 
 on:
   schedule:
-    - cron: '0 20 * * *'  # Hoje às 17h BRT (20h UTC) - ajuste depois pra '0 3 * * 1' se quiser 00h BRT toda segunda
-  workflow_dispatch:      # Permite rodar manualmente também
+    - cron: '0 20 * * *'
+  workflow_dispatch:
 
 jobs:
   run-script:
@@ -16,8 +16,9 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
-          # Garante que o chromedriver esteja acessível, evitando erro se já existir
-          sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+          if [ "$(readlink -f /usr/bin/chromedriver)" != "/usr/lib/chromium-browser/chromedriver" ]; then
+            sudo ln -sf /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+          fi
 
       - name: Instalar dependências Python
         run: |
@@ -29,3 +30,11 @@ jobs:
           PLANILHA_URL: ${{ secrets.PLANILHA_URL }}
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: python3 planilha_discord.py
+
+      - name: Enviar erro para o Discord se o script falhar
+        if: failure()
+        run: |
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "{\"content\": \"❌ Falha ao atualizar a planilha! Verifique o GitHub Actions.\"}" \
+               ${{ secrets.WEBHOOK_URL }}
