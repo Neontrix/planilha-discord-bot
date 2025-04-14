@@ -43,11 +43,13 @@ jobs:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: |
           if [ -z "$WEBHOOK_URL" ]; then
-            echo "❌ WEBHOOK_URL está vazio ou não definido."
-            exit 1
+            echo "❌ WEBHOOK_URL não está definido. Abortando envio do erro."
+            exit 0
           fi
+
+          PAYLOAD='{"content": "❌ Falha ao enviar print da planilha de farm! Verifique o GitHub Actions."}'
 
           curl -H "Content-Type: application/json" \
                -X POST \
-               -d "{\"content\": \"❌ Falha ao enviar print da planilha de farm! Verifique o GitHub Actions.\"}" \
+               -d "$PAYLOAD" \
                "$WEBHOOK_URL"
