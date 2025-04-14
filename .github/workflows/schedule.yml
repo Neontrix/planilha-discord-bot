@@ -12,15 +12,17 @@ jobs:
       - name: Checkout do código
         uses: actions/checkout@v3
 
-      - name: Instalar dependências do sistema
+      - name: Instalar Google Chrome e ChromeDriver
         run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser
-          # Verificar a instalação do Chrome
-          which chromium-browser || { echo "Chromium não instalado corretamente!"; exit 1; }
-          # Instalar chromedriver via Selenium e webdriver-manager
+          # Instalar Google Chrome
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install -y ./google-chrome-stable_current_amd64.deb
+
+          # Baixar o ChromeDriver compatível
           sudo apt-get install -y unzip
-          curl -sSL https://chromedriver.storage.googleapis.com/114.0.5735.90/chromedriver_linux64.zip -o /tmp/chromedriver.zip
+          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+          curl -sSL "https://chromedriver.storage.googleapis.com/${DRIVER_VERSION}/chromedriver_linux64.zip" -o /tmp/chromedriver.zip
           unzip /tmp/chromedriver.zip -d /usr/local/bin
           sudo chmod +x /usr/local/bin/chromedriver
 
