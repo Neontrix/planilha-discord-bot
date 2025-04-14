@@ -14,14 +14,18 @@ jobs:
 
       - name: Instalar Google Chrome e ChromeDriver
         run: |
-          # Instalar Google Chrome
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt install -y ./google-chrome-stable_current_amd64.deb
-
-          # Baixar o ChromeDriver compatível
           sudo apt-get install -y unzip
+
           CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
-          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}")
+          
+          if [ -z "$DRIVER_VERSION" ]; then
+            echo "❌ Falha ao obter a versão do ChromeDriver compatível com $CHROME_VERSION"
+            exit 1
+          fi
+          
           curl -sSL "https://chromedriver.storage.googleapis.com/${DRIVER_VERSION}/chromedriver_linux64.zip" -o /tmp/chromedriver.zip
           unzip /tmp/chromedriver.zip -d /usr/local/bin
           sudo chmod +x /usr/local/bin/chromedriver
@@ -39,8 +43,10 @@ jobs:
 
       - name: Enviar erro para o Discord se o script falhar
         if: failure()
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: |
           curl -H "Content-Type: application/json" \
                -X POST \
                -d "{\"content\": \"❌ Falha ao enviar print da planilha de farm! Verifique o GitHub Actions.\"}" \
-               ${{ secrets.WEBHOOK_URL }}
+               "$WEBHOOK_URL"
