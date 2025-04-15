@@ -1,55 +1,39 @@
-name: Planilha de farm no Discord
+name: Schedule Ping
 
 on:
   schedule:
-    - cron: '1 4 * * 1'  # Toda segunda-feira às 01:01 (BRT / UTC-3)
-  workflow_dispatch:
+    - cron: '1 4 * * 1'  # Toda segunda-feira às 01:01 BRT (UTC-3)
+  workflow_dispatch:     # Permite execução manual também
 
 jobs:
-  run-script:
+  send-ping:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout do código
+      - name: Checkout do repositório
         uses: actions/checkout@v3
 
-      - name: Instalar Google Chrome e ChromeDriver
+      - name: Instala dependências (Chrome e unzip)
         run: |
-          # Instalar Google Chrome
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt update
+          curl -O https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt install -y ./google-chrome-stable_current_amd64.deb
+          sudo apt install -y unzip
 
-          # Baixar o ChromeDriver compatível
-          sudo apt-get install -y unzip
-          CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
-          DRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
-          curl -sSL "https://chromedriver.storage.googleapis.com/${DRIVER_VERSION}/chromedriver_linux64.zip" -o /tmp/chromedriver.zip
-          unzip /tmp/chromedriver.zip -d /usr/local/bin
-          sudo chmod +x /usr/local/bin/chromedriver
-
-      - name: Instalar dependências Python
-        run: |
-          python3 -m pip install --upgrade pip
-          pip install selenium requests webdriver-manager
-
-      - name: Rodar script Python
-        env:
-          PLANILHA_URL: ${{ secrets.PLANILHA_URL }}
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-        run: python3 planilha_discord.py
-
-      - name: Enviar erro para o Discord se o script falhar
-        if: failure()
-        env:
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+      - name: Verifica e exibe parte do webhook
         run: |
           if [ -z "$WEBHOOK_URL" ]; then
-            echo "❌ WEBHOOK_URL não está definido. Abortando envio do erro."
+            echo "❌ WEBHOOK_URL não está definido. Abortando envio do ping."
             exit 0
+          else
+            echo "🔒 WEBHOOK_URL está definido. Início do valor: ${WEBHOOK_URL:0:40}****"
           fi
 
-          PAYLOAD='{"content": "❌ Falha ao enviar print da planilha de farm! Verifique o GitHub Actions."}'
+      - name: Envia ping para o webhook
+        run: |
+          curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d '{"content":"✅ Ping automático executado com sucesso!"}'
 
-          curl -H "Content-Type: application/json" \
-               -X POST \
-               -d "$PAYLOAD" \
-               "$WEBHOOK_URL"
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
