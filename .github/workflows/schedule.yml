@@ -1,39 +1,39 @@
-name: Schedule Ping
+name: Ping semanal da planilha
 
 on:
   schedule:
-    - cron: '1 4 * * 1'  # Toda segunda-feira às 01:01 BRT (UTC-3)
-  workflow_dispatch:     # Permite execução manual também
+    - cron: '1 4 * * 1'  # Toda segunda-feira às 01:01 (BRT / UTC-3)
+  workflow_dispatch:
 
 jobs:
-  send-ping:
+  ping:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout do repositório
         uses: actions/checkout@v3
 
-      - name: Instala dependências (Chrome e unzip)
+      - name: Configura variáveis de ambiente
+        run: |
+          echo "PLANILHA_URL=${{ secrets.PLANILHA_URL }}" >> $GITHUB_ENV
+          echo "WEBHOOK_URL=${{ secrets.WEBHOOK_URL }}" >> $GITHUB_ENV
+
+      - name: Instala dependências (Chrome, unzip, curl)
         run: |
           sudo apt update
+          sudo apt install -y unzip curl
           curl -O https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo apt install -y ./google-chrome-stable_current_amd64.deb
-          sudo apt install -y unzip
+          sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt --fix-broken install -y
+          google-chrome --version
 
-      - name: Verifica e exibe parte do webhook
+      - name: Configura Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - name: Instala dependências do Python
         run: |
-          if [ -z "$WEBHOOK_URL" ]; then
-            echo "❌ WEBHOOK_URL não está definido. Abortando envio do ping."
-            exit 0
-          else
-            echo "🔒 WEBHOOK_URL está definido. Início do valor: ${WEBHOOK_URL:0:40}****"
-          fi
+          pip install selenium webdriver-manager requests
 
-      - name: Envia ping para o webhook
-        run: |
-          curl -X POST "$WEBHOOK_URL" \
-            -H "Content-Type: application/json" \
-            -d '{"content":"✅ Ping automático executado com sucesso!"}'
-
-        env:
-          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+      - name: Executa o script
+        run: python planilha_discord.py
