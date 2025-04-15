@@ -1,4 +1,4 @@
-name: Ping semanal da planilha
+name: Farm semanal da planilha
 
 on:
   schedule:
